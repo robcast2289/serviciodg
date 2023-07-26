@@ -1,4 +1,4 @@
-from models.oracle.ora_db import Oradb, ODBType, ODBFunctionType
+from repositories.oracle.ora_db import Oradb, ODBType, ODBFunctionType
 from typing import List
 
 class PkgUsuario:

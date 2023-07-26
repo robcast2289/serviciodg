@@ -1,7 +1,16 @@
 import re
 from starlette.routing import Route
 from fastapi import FastAPI
-from routers import publico, usuarios, empleados, facultades, etiquetas
+from routers import (publico, 
+                     usuarios, 
+                     empleados, 
+                     facultades, 
+                     etiquetas, 
+                     docentes,
+                     convenios,
+                     carreras,
+                     archivos,
+                     alumnos)
 
 app = FastAPI(
     version="1.0.1",
@@ -14,6 +23,11 @@ app.include_router(usuarios.router)
 app.include_router(empleados.router)
 app.include_router(facultades.router)
 app.include_router(etiquetas.router)
+app.include_router(docentes.router)
+app.include_router(convenios.router)
+app.include_router(carreras.router)
+app.include_router(archivos.router)
+app.include_router(alumnos.router)
 
 
 @app.get("/")

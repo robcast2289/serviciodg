@@ -1,4 +1,4 @@
-from models.oracle.ora_db import Oradb, ODBType, ODBFunctionType
+from repositories.oracle.ora_db import Oradb, ODBType, ODBFunctionType
 
 class PkgDigitalizacion:
 
@@ -70,7 +70,7 @@ class PkgDigitalizacion:
             },
         ]
         ret = Oradb().execute_procedure("DBAFISICC.PKG_DIGITALIZACION.OBTENERCARRERASXCARNET",params)
-        return ret["RETVAL"]
+        return ret["CURTABLA"]
     
 
     def Archivo(Idarchivo:int):
@@ -84,6 +84,44 @@ class PkgDigitalizacion:
         ]
         ret = Oradb().execute_function("DBAFISICC.PKG_DIGITALIZACION.ARCHIVO",params,ODBFunctionType.CURSOR)
         return ret["RETORNO_FUNCION"]
+
+
+    def Entidad(Carrera:str):
+        params = [
+            {
+                "nombre": "PCARRERA",
+                "tipo": ODBType.DECIMAL,
+                "valor": Carrera,
+                "direccion": "IN"
+            },
+        ]
+        ret = Oradb().execute_function("DBAFISICC.PKG_DIGITALIZACION.ENTIDAD",params,ODBFunctionType.STRING)
+        return ret["RETORNO_FUNCION"]
+
+
+    def Obtenertitulosxcarrera(Carrera:str ,Titulo:int):
+        params = [
+            {
+                "nombre": "PCARRERA",
+                "tipo": ODBType.VARCHAR2,
+                "valor": Carrera,
+                "direccion": "IN"
+            },
+            {
+                "nombre": "PTITULO",
+                "tipo": ODBType.INT,
+                "valor": Titulo,
+                "direccion": "IN"
+            },
+            {
+                "nombre": "CURTABLA",
+                "tipo": ODBType.SYS_REFCURSOR,
+                "valor": '',
+                "direccion": "OUT"
+            },
+        ]
+        ret = Oradb().execute_procedure("DBAFISICC.PKG_DIGITALIZACION.OBTENERTITULOSXCARRERA",params)
+        return ret["CURTABLA"]
 
 
     def Obtenernombrealumno(Carnet:str):
@@ -102,4 +140,93 @@ class PkgDigitalizacion:
             },
         ]
         ret = Oradb().execute_procedure("DBAFISICC.PKG_DIGITALIZACION.OBTENERNOMBREALUMNO",params)
-        return ret["CURTABLA"]
+        retProc = ret["CURTABLA"]
+        lst = list()
+        for alumno in retProc:
+            lst.append(alumno["Nombrealumno"])
+        return lst
+    
+
+    def Idarchivo(Aplicacion:str, Categoria:int, Etiqueta:int, Valor:str):
+        params = [
+            {
+                "nombre": "PAPLICACION",
+                "tipo": ODBType.VARCHAR2,
+                "valor": Aplicacion,
+                "direccion": "IN"
+            },
+            {
+                "nombre": "PCATEGORIA",
+                "tipo": ODBType.INT,
+                "valor": Categoria,
+                "direccion": "IN"
+            },            
+            {
+                "nombre": "PETIQUETA",
+                "tipo": ODBType.INT,
+                "valor": Etiqueta,
+                "direccion": "IN"
+            },            
+            {
+                "nombre": "PVALOR",
+                "tipo": ODBType.VARCHAR2,
+                "valor": Valor,
+                "direccion": "IN"
+            },
+        ]
+        ret = Oradb().execute_function("DBAFISICC.PKG_DIGITALIZACION.IDARCHIVO",params,ODBFunctionType.CURSOR)
+        retFunc = ret["RETORNO_FUNCION"]
+        lst = list()
+        for link in retFunc:
+            lst.append(link["Idarchivo"])
+        return lst
+    
+
+    def Archivovalido(Idarchivo:int):
+        params = [
+            {
+                "nombre": "PIDARCHIVO",
+                "tipo": ODBType.DECIMAL,
+                "valor": Idarchivo,
+                "direccion": "IN"
+            }
+        ]
+        ret = Oradb().execute_function("DBAFISICC.PKG_DIGITALIZACION.ARCHIVOVALIDO",params,ODBFunctionType.CURSOR)
+        return ret["RETORNO_FUNCION"]
+    
+
+    def Nombrecarreras(Carrera:str):
+        params = [
+            {
+                "nombre": "PSQLCODE",
+                "tipo": ODBType.NUMBER,
+                "valor": '',
+                "direccion": "OUT"
+            },
+            {
+                "nombre": "PERROR",
+                "tipo": ODBType.VARCHAR2,
+                "valor": '',
+                "direccion": "OUT"
+            },
+            {
+                "nombre": "PRESP",
+                "tipo": ODBType.NUMBER,
+                "valor": '',
+                "direccion": "OUT"
+            },
+            {
+                "nombre": "RETVAL",
+                "tipo": ODBType.SYS_REFCURSOR,
+                "valor": '',
+                "direccion": "OUT"
+            },
+            {
+                "nombre": "PCARRERA",
+                "tipo": ODBType.VARCHAR2,
+                "valor": Carrera,
+                "direccion": "IN"
+            },                        
+        ]
+        ret = Oradb().execute_procedure("DBAFISICC.PKG_DIGITALIZACION.BUSCARCARRERA",params)
+        return ret["RETVAL"]

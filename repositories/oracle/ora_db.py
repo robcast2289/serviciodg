@@ -1,5 +1,5 @@
 import oracledb
-from models.oracle.settings import Settings
+from ..oracle.settings import Settings
 from typing import List
 
 

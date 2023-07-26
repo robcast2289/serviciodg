@@ -1,59 +1,28 @@
-from fastapi import APIRouter, Depends, Query
-from typing import Annotated, List, Optional
+from fastapi import APIRouter, Query
 from schemas.EtiquetasSchema import EtiquetasRequest, Etiqueta
 from models.pkg_digitalizacion import PkgDigitalizacion
-from pydantic import BaseModel, ValidationError, Field
-from fastapi.exceptions import RequestValidationError
-from datetime import datetime
-import inspect
 import json
+import pandas as pd
 
 
-class QueryBaseModel(BaseModel):
-    def __init_subclass__(cls, *args, **kwargs):
-        #super().__init_subclass__(**kwargs)
-        field_default = Query(...)
-        new_params = []
-        print(cls.__fields__)
-        for field in cls.__fields__.values():
-            default = Query(field.default) if not field.required else field_default
-            annotation = inspect.Parameter.empty
+def Archivos(model: EtiquetasRequest):
+    IDArchivos = []
 
-            new_params.append(
-                inspect.Parameter(
-                    field.alias,
-                    inspect.Parameter.POSITIONAL_ONLY,
-                    default=default,
-                    annotation=annotation,
-                )
-            )
+    for etiqueta in model.Etiquetas:
+        archivos = PkgDigitalizacion.Idarchivo(model.Aplicacion,model.Categoria,etiqueta.Etiqueta,etiqueta.Valor)
+        IDArchivos.append(archivos)
 
-        async def _as_query(**data):
-            print(**data)
-            try:
-                print(cls(**data))
-                return cls(**data)
-            except ValidationError as e:
-                raise RequestValidationError(repr(e.errors()[0]['type']))
+    IDArchivos_flat = [item for sublist in IDArchivos for item in sublist]
+    # Convertir las listas en DataFrames
+    df_archivos = pd.DataFrame(IDArchivos_flat, columns=['IDArchivo'])
+    #df_etiquetas = pd.DataFrame(model.Etiquetas, columns=['Etiqueta'])
 
-        sig = inspect.signature(_as_query)
-        sig = sig.replace(parameters=new_params)
-        _as_query.__signature__ = sig  # type: ignore
-        setattr(cls, "as_query", _as_query)
+    # Realizar el agrupamiento y filtro
+    resultados = df_archivos.groupby('IDArchivo').filter(lambda x: x['IDArchivo'].count() == len(model.Etiquetas))
+    # Obtener los valores agrupados que cumplen con la condición
+    valores_finales = resultados['IDArchivo'].unique().tolist()
 
-    @staticmethod
-    def as_query(parameters=[]) -> "QueryBaseModel":
-        print('parameters')
-        raise NotImplementedError
-
-class ParamModelDetail(QueryBaseModel):
-    Etiqueta: str = Field(default=None, alias='Etiquteta', required=False)
-    Valor: str = Field(default=None, alias='Valor', required=False)
-
-class ParamModel(QueryBaseModel):
-    Aplicacion: Optional[str] #= Field(default=None, alias='Aplicacion', required=False)
-    Categoria: Optional[str] #= Field(default=None, alias='Categoria', required=False)
-    #Etiquetas: List[ParamModelDetail] = Field(default=None, alias='Etiquetas', required=False)
+    return valores_finales
 
 
 router = APIRouter(
@@ -68,10 +37,6 @@ async def etiquetas():
     return ret
 
 
-""" @router.get("/archivo")
-async def archivo(model:EtiquetasRequest = Depends(EtiquetasRequest.as_query)):
-    print(model.Aplicacion)
-    return model """
 @router.get("/archivo")
 async def archivo(Aplicacion: str, Categoria: int, Etiquetas: str = Query(...)):
     etiquetas_list = json.loads(Etiquetas)
@@ -80,11 +45,24 @@ async def archivo(Aplicacion: str, Categoria: int, Etiquetas: str = Query(...)):
         etiquetas_obj.append(Etiqueta(Etiqueta=etiqueta["Etiqueta"], Valor=etiqueta["Valor"]))
 
     params = EtiquetasRequest(Aplicacion=Aplicacion, Categoria=Categoria, Etiquetas=etiquetas_obj)
-    return params.Etiquetas[0].Etiqueta
+
+    ret = Archivos(params)
+    return int(ret[0])
 
 
+@router.get("/archivos")
+async def archivos(Aplicacion: str, Categoria: int, Etiquetas: str = Query(...)):
+    etiquetas_list = json.loads(Etiquetas)
+    etiquetas_obj = []
+    for etiqueta in etiquetas_list:
+        etiquetas_obj.append(Etiqueta(Etiqueta=etiqueta["Etiqueta"], Valor=etiqueta["Valor"]))
 
-@router.get("/api")
-def test(q_param: ParamModel = Depends(ParamModel.as_query)):
-    #start_datetime = q_param.Nombre
-    return q_param
+    params = EtiquetasRequest(Aplicacion=Aplicacion, Categoria=Categoria, Etiquetas=etiquetas_obj)
+
+    ret = Archivos(params)
+
+    lst = list()
+    for IDArchivo in ret:
+        lst.append(PkgDigitalizacion.Archivovalido(IDArchivo)[0])
+
+    return lst

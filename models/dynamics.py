@@ -1,4 +1,4 @@
-from models.sqlserver.sql_db import Sqldb
+from repositories.sqlserver.sql_db import Sqldb
 
 class Dynamics:
     def ObtenerNombre(emplId:str):

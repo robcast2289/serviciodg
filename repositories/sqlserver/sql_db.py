@@ -1,5 +1,5 @@
 import pypyodbc as odbc
-from models.sqlserver.settings import Settings
+from ..sqlserver.settings import Settings
 
 def convert_camel_case(texto: str) -> str:
     """
