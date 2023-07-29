@@ -12,11 +12,10 @@ def Archivos(model: EtiquetasRequest):
         archivos = PkgDigitalizacion.Idarchivo(model.Aplicacion,model.Categoria,etiqueta.Etiqueta,etiqueta.Valor)
         IDArchivos.append(archivos)
 
+    # Transforma la lista de listas en una sola lista
     IDArchivos_flat = [item for sublist in IDArchivos for item in sublist]
     # Convertir las listas en DataFrames
     df_archivos = pd.DataFrame(IDArchivos_flat, columns=['IDArchivo'])
-    #df_etiquetas = pd.DataFrame(model.Etiquetas, columns=['Etiqueta'])
-
     # Realizar el agrupamiento y filtro
     resultados = df_archivos.groupby('IDArchivo').filter(lambda x: x['IDArchivo'].count() == len(model.Etiquetas))
     # Obtener los valores agrupados que cumplen con la condición
@@ -37,7 +36,7 @@ async def etiquetas():
     return ret
 
 
-@router.get("/archivo")
+@router.get("/archivo/")
 async def archivo(Aplicacion: str, Categoria: int, Etiquetas: str = Query(...)):
     etiquetas_list = json.loads(Etiquetas)
     etiquetas_obj = []

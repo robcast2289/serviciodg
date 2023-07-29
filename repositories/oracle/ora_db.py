@@ -1,5 +1,5 @@
 import oracledb
-from ..oracle.settings import Settings
+from .settings import Settings
 from typing import List
 
 
@@ -226,13 +226,14 @@ class Oradb:
                         dynamic_var_types.append(param_type)
 
                 cursor.callproc(procedure_name, send_params)
-
+                self.connection.commit()
                 params_out = get_dynamic_values(dynamic_var_names, dynamic_vars, dynamic_var_types)
 
                 return params_out
         except (oracledb.DatabaseError, oracledb.InterfaceError) as e:
             return {"OOPS": str(e)}
         finally:
+            self.connection.commit()
             self.close_connection()
             self.disconnect()
 
