@@ -9,7 +9,7 @@ def Archivos(model: EtiquetasRequest):
     IDArchivos = []
 
     for etiqueta in model.Etiquetas:
-        archivos = PkgDigitalizacion.Idarchivo(model.Aplicacion,model.Categoria,etiqueta.Etiqueta,etiqueta.Valor)
+        archivos = PkgDigitalizacion().Idarchivo(model.Aplicacion,model.Categoria,etiqueta.Etiqueta,etiqueta.Valor)
         IDArchivos.append(archivos)
 
     # Transforma la lista de listas en una sola lista
@@ -32,7 +32,7 @@ router = APIRouter(
 
 @router.get("/")
 async def etiquetas():
-    ret = PkgDigitalizacion.Etiquetas()
+    ret = PkgDigitalizacion().Etiquetas()
     return ret
 
 
@@ -62,6 +62,6 @@ async def archivos(Aplicacion: str, Categoria: int, Etiquetas: str = Query(...))
 
     lst = list()
     for IDArchivo in ret:
-        lst.append(PkgDigitalizacion.Archivovalido(IDArchivo)[0])
+        lst.append(PkgDigitalizacion().Archivovalido(IDArchivo)[0])
 
     return lst

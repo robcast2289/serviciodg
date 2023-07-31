@@ -11,25 +11,25 @@ router = APIRouter(
 
 @router.get("/{ID}")
 async def carreras(ID:str):
-    ret = PkgDigitalizacion.Obtenercarrerasxcarnet(ID)
+    ret = PkgDigitalizacion().Obtenercarrerasxcarnet(ID)
     return ret
 
 
 @router.get("/entidad/")
 async def entidad(model:CarrerasRequest = Depends()):
-    ret = PkgDigitalizacion.Entidad(model.Carrera)
+    ret = PkgDigitalizacion().Entidad(model.Carrera)
     return ret
 
 
 @router.get("/titulos/")
 async def titulos(model:TitulosRequest = Depends()):
-    ret = PkgDigitalizacion.Obtenertitulosxcarrera(model.Carrera,model.Titulo)
+    ret = PkgDigitalizacion().Obtenertitulosxcarrera(model.Carrera,model.Titulo)
     return ret
 
 
 @router.get("/nombrecarreras/")
 async def titulos(model:CarrerasCarrerasRequest = Depends()):
-    ret = PkgDigitalizacion.Nombrecarreras(model.BuscarCarrera)
+    ret = PkgDigitalizacion().Nombrecarreras(model.BuscarCarrera)
 
     lst = list()
     for carrera in ret:

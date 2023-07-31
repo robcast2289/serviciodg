@@ -11,7 +11,7 @@ router = APIRouter(
 
 @router.get("/")
 async def alumnos(model:AlumnosRequest = Depends()):
-    ret = PkgDigitalizacion.Obtenernombrealumno(model.ID)[0]
+    ret = PkgDigitalizacion().Obtenernombrealumno(model.ID)[0]
     return ret
 
 

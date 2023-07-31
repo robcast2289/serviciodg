@@ -1,14 +1,16 @@
 from repositories.oracle.ora_db import Oradb, ODBType, ODBFunctionType
 
-class PkgDigitalizacion:
+class PkgDigitalizacion(Oradb):
+    def __init__(self):
+        super().__init__()
 
-    def AplicacionesNombre():
+    def AplicacionesNombre(self):
         params = []
-        ret = Oradb().execute_function("DBAFISICC.PKG_DIGITALIZACION.APLICACIONES_NOMBRE",params,ODBFunctionType.CURSOR)
+        ret = self.execute_function("DBAFISICC.PKG_DIGITALIZACION.APLICACIONES_NOMBRE",params,ODBFunctionType.CURSOR)
         return ret["RETORNO_FUNCION"]
     
 
-    def Categorias(Aplicacion:str):
+    def Categorias(self,Aplicacion:str):
         params = [
             {
                 "nombre": "PAPLICACION",
@@ -17,18 +19,18 @@ class PkgDigitalizacion:
                 "direccion": "IN"
             },
         ]
-        ret = Oradb().execute_function("DBAFISICC.PKG_DIGITALIZACION.CATEGORIAS",params,ODBFunctionType.CURSOR)
+        ret = self.execute_function("DBAFISICC.PKG_DIGITALIZACION.CATEGORIAS",params,ODBFunctionType.CURSOR)
         return ret["RETORNO_FUNCION"]
     
 
 
-    def Etiquetas():
+    def Etiquetas(self):
         params = []
-        ret = Oradb().execute_function("DBAFISICC.PKG_DIGITALIZACION.ETIQUETAS",params,ODBFunctionType.CURSOR)
+        ret = self.execute_function("DBAFISICC.PKG_DIGITALIZACION.ETIQUETAS",params,ODBFunctionType.CURSOR)
         return ret["RETORNO_FUNCION"]
     
 
-    def EtiquetasArchivo(Idarchivo:int):
+    def EtiquetasArchivo(self,Idarchivo:int):
         params = [
             {
                 "nombre": "PIDARCHIVO",
@@ -37,11 +39,11 @@ class PkgDigitalizacion:
                 "direccion": "IN"
             },
         ]
-        ret = Oradb().execute_function("DBAFISICC.PKG_DIGITALIZACION.ETIQUETASARCHIVO",params,ODBFunctionType.CURSOR)
+        ret = self.execute_function("DBAFISICC.PKG_DIGITALIZACION.ETIQUETASARCHIVO",params,ODBFunctionType.CURSOR)
         return ret["RETORNO_FUNCION"]
     
 
-    def ResolucionesCompletas(Resolucion:str):
+    def ResolucionesCompletas(self,Resolucion:str):
         params = [
             {
                 "nombre": "PRESOLUCION",
@@ -50,11 +52,11 @@ class PkgDigitalizacion:
                 "direccion": "IN"
             },
         ]
-        ret = Oradb().execute_function("DBAFISICC.PKG_DIGITALIZACION.OBTENERRESOLUCIONESCOMPLETAS",params,ODBFunctionType.CURSOR)
+        ret = self.execute_function("DBAFISICC.PKG_DIGITALIZACION.OBTENERRESOLUCIONESCOMPLETAS",params,ODBFunctionType.CURSOR)
         return ret["RETORNO_FUNCION"]
     
 
-    def Obtenercarrerasxcarnet(Carnet:str):
+    def Obtenercarrerasxcarnet(self,Carnet:str):
         params = [
             {
                 "nombre": "PCARNET",
@@ -69,11 +71,11 @@ class PkgDigitalizacion:
                 "direccion": "OUT"
             },
         ]
-        ret = Oradb().execute_procedure("DBAFISICC.PKG_DIGITALIZACION.OBTENERCARRERASXCARNET",params)
+        ret = self.execute_procedure("DBAFISICC.PKG_DIGITALIZACION.OBTENERCARRERASXCARNET",params)
         return ret["CURTABLA"]
     
 
-    def Archivo(Idarchivo:int):
+    def Archivo(self,Idarchivo:int):
         params = [
             {
                 "nombre": "PIDARCHIVO",
@@ -82,11 +84,11 @@ class PkgDigitalizacion:
                 "direccion": "IN"
             },
         ]
-        ret = Oradb().execute_function("DBAFISICC.PKG_DIGITALIZACION.ARCHIVO",params,ODBFunctionType.CURSOR)
+        ret = self.execute_function("DBAFISICC.PKG_DIGITALIZACION.ARCHIVO",params,ODBFunctionType.CURSOR)
         return ret["RETORNO_FUNCION"]
 
 
-    def Entidad(Carrera:str):
+    def Entidad(self,Carrera:str):
         params = [
             {
                 "nombre": "PCARRERA",
@@ -95,11 +97,11 @@ class PkgDigitalizacion:
                 "direccion": "IN"
             },
         ]
-        ret = Oradb().execute_function("DBAFISICC.PKG_DIGITALIZACION.ENTIDAD",params,ODBFunctionType.STRING)
+        ret = self.execute_function("DBAFISICC.PKG_DIGITALIZACION.ENTIDAD",params,ODBFunctionType.STRING)
         return ret["RETORNO_FUNCION"]
 
 
-    def Obtenertitulosxcarrera(Carrera:str ,Titulo:int):
+    def Obtenertitulosxcarrera(self,Carrera:str ,Titulo:int):
         params = [
             {
                 "nombre": "PCARRERA",
@@ -120,11 +122,11 @@ class PkgDigitalizacion:
                 "direccion": "OUT"
             },
         ]
-        ret = Oradb().execute_procedure("DBAFISICC.PKG_DIGITALIZACION.OBTENERTITULOSXCARRERA",params)
+        ret = self.execute_procedure("DBAFISICC.PKG_DIGITALIZACION.OBTENERTITULOSXCARRERA",params)
         return ret["CURTABLA"]
     
 
-    def Rutacategoria(Aplicacion:str, Categoria:int):
+    def Rutacategoria(self,Aplicacion:str, Categoria:int):
         params = [
             {
                 "nombre": "PAPLICACION",
@@ -139,11 +141,11 @@ class PkgDigitalizacion:
                 "direccion": "IN"
             },
         ]
-        ret = Oradb().execute_function("DBAFISICC.PKG_DIGITALIZACION.RUTACATEGORIA",params,ODBFunctionType.STRING)
+        ret = self.execute_function("DBAFISICC.PKG_DIGITALIZACION.RUTACATEGORIA",params,ODBFunctionType.STRING)
         return ret["RETORNO_FUNCION"]
 
 
-    def Obtenernombrealumno(Carnet:str):
+    def Obtenernombrealumno(self,Carnet:str):
         params = [
             {
                 "nombre": "PCARNET",
@@ -158,7 +160,7 @@ class PkgDigitalizacion:
                 "direccion": "OUT"
             },
         ]
-        ret = Oradb().execute_procedure("DBAFISICC.PKG_DIGITALIZACION.OBTENERNOMBREALUMNO",params)
+        ret = self.execute_procedure("DBAFISICC.PKG_DIGITALIZACION.OBTENERNOMBREALUMNO",params)
         retProc = ret["CURTABLA"]
         lst = list()
         for alumno in retProc:
@@ -166,7 +168,7 @@ class PkgDigitalizacion:
         return lst
     
 
-    def Idarchivo(Aplicacion:str, Categoria:int, Etiqueta:int, Valor:str):
+    def Idarchivo(self,Aplicacion:str, Categoria:int, Etiqueta:int, Valor:str):
         params = [
             {
                 "nombre": "PAPLICACION",
@@ -193,7 +195,7 @@ class PkgDigitalizacion:
                 "direccion": "IN"
             },
         ]
-        ret = Oradb().execute_function("DBAFISICC.PKG_DIGITALIZACION.IDARCHIVO",params,ODBFunctionType.CURSOR)
+        ret = self.execute_function("DBAFISICC.PKG_DIGITALIZACION.IDARCHIVO",params,ODBFunctionType.CURSOR)
         retFunc = ret["RETORNO_FUNCION"]
         lst = list()
         for link in retFunc:
@@ -201,7 +203,7 @@ class PkgDigitalizacion:
         return lst
     
 
-    def Actualizararchivonovalido(Idarchivo:int):
+    def Actualizararchivonovalido(self,Idarchivo:int):
         params = [
             {
                 "nombre": "PIDARCHIVO",
@@ -210,11 +212,11 @@ class PkgDigitalizacion:
                 "direccion": "IN"
             },                    
         ]
-        Oradb().execute_procedure("DBAFISICC.PKG_DIGITALIZACION.ACTUALIZARARCHIVONOVALIDO",params)
+        self.execute_procedure("DBAFISICC.PKG_DIGITALIZACION.ACTUALIZARARCHIVONOVALIDO",params)
         return
     
 
-    def Version(Idarchivo:int):
+    def Version(self,Idarchivo:int):
         params = [
             {
                 "nombre": "PIDARCHIVO",
@@ -223,11 +225,11 @@ class PkgDigitalizacion:
                 "direccion": "IN"
             },            
         ]
-        ret = Oradb().execute_function("DBAFISICC.PKG_DIGITALIZACION.VERSION",params,ODBFunctionType.NUMBER)
+        ret = self.execute_function("DBAFISICC.PKG_DIGITALIZACION.VERSION",params,ODBFunctionType.NUMBER)
         return ret["RETORNO_FUNCION"]
     
 
-    def Insertardetallearchivo(Idarchivo:int, Aplicacion:str, Categoria:int, Etiqueta:int, Valor:str):
+    def Insertardetallearchivo(self,Idarchivo:int, Aplicacion:str, Categoria:int, Etiqueta:int, Valor:str):
         params = [
             {
                 "nombre": "PIDARCHIVO",
@@ -260,17 +262,17 @@ class PkgDigitalizacion:
                 "direccion": "IN"
             }, 
         ]
-        ret = Oradb().execute_procedure("DBAFISICC.PKG_DIGITALIZACION.INSERTARDETALLEARCHIVO",params)
+        ret = self.execute_procedure("DBAFISICC.PKG_DIGITALIZACION.INSERTARDETALLEARCHIVO",params)
         return
     
 
-    def Idarchivonuevo():
+    def Idarchivonuevo(self,):
         params = []
-        ret = Oradb().execute_function("DBAFISICC.PKG_DIGITALIZACION.IDARCHIVO_NUEVO",params,ODBFunctionType.NUMBER)
+        ret = self.execute_function("DBAFISICC.PKG_DIGITALIZACION.IDARCHIVO_NUEVO",params,ODBFunctionType.NUMBER)
         return ret["RETORNO_FUNCION"]
     
 
-    def Insertararchivo(Idarchivo:int, Nombre:str, Tamano:float, Extension:str, Usuario:str, Noversion:int, Ruta:str, Extensionfisica:str):
+    def Insertararchivo(self,Idarchivo:int, Nombre:str, Tamano:float, Extension:str, Usuario:str, Noversion:int, Ruta:str, Extensionfisica:str):
         params = [
             {
                 "nombre": "PIDARCHIVO",
@@ -321,12 +323,12 @@ class PkgDigitalizacion:
                 "direccion": "IN"
             },        
         ]
-        ret = Oradb().execute_procedure("DBAFISICC.PKG_DIGITALIZACION.INSERTARARCHIVO",params)
+        ret = self.execute_procedure("DBAFISICC.PKG_DIGITALIZACION.INSERTARARCHIVO",params)
         return 
 
     
 
-    def Archivovalido(Idarchivo:int):
+    def Archivovalido(self,Idarchivo:int):
         params = [
             {
                 "nombre": "PIDARCHIVO",
@@ -335,11 +337,11 @@ class PkgDigitalizacion:
                 "direccion": "IN"
             }
         ]
-        ret = Oradb().execute_function("DBAFISICC.PKG_DIGITALIZACION.ARCHIVOVALIDO",params,ODBFunctionType.CURSOR)
+        ret = self.execute_function("DBAFISICC.PKG_DIGITALIZACION.ARCHIVOVALIDO",params,ODBFunctionType.CURSOR)
         return ret["RETORNO_FUNCION"]
     
 
-    def Nombrecarreras(Carrera:str):
+    def Nombrecarreras(self,Carrera:str):
         params = [
             {
                 "nombre": "PSQLCODE",
@@ -372,5 +374,5 @@ class PkgDigitalizacion:
                 "direccion": "IN"
             },                        
         ]
-        ret = Oradb().execute_procedure("DBAFISICC.PKG_DIGITALIZACION.BUSCARCARRERA",params)
+        ret = self.execute_procedure("DBAFISICC.PKG_DIGITALIZACION.BUSCARCARRERA",params)
         return ret["RETVAL"]

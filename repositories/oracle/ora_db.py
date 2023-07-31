@@ -120,6 +120,7 @@ class Oradb:
         self.incr_conns = settings.incr_conns
         self.pool = settings.pool
         self.connection = None
+        self.transaction = False
 
     def create_pool(self):
         """
@@ -150,11 +151,12 @@ class Oradb:
             Returns:
                 None
         """
+        print("Transaccion: "+str(self.transaction))
         if self.connection is not None:
             self.connection.close()
             self.connection = None
 
-    def connect(self):
+    def connect(self,transaction = False):
         """
            Establece una conexión utilizando el pool de conexiones.
 
@@ -166,8 +168,29 @@ class Oradb:
        """
         try:
             self.connection = self.pool.acquire()
+            self.transaction = transaction
         except oracledb.DatabaseError as e:
             raise ConnectionError("Error al establecer la conexión: " + str(e))
+        
+
+    def begin_transaction(self):
+        if self.connection is None:
+            self.create_pool()
+            self.connect(transaction=True)
+            self.connection.begin()
+
+    def commit_transaction(self):
+        if self.connection is not None:
+            self.connection.commit()
+            self.close_connection()
+            self.disconnect()
+
+    def rollback(self):
+        if self.connection is not None:
+            self.connection.rollback()
+            self.close_connection()
+            self.disconnect()
+            
 
     def execute_procedure(self, procedure_name: str, params: List[dict]):
         """
@@ -188,9 +211,10 @@ class Oradb:
             Raises:
                 ConnectionError: Si ocurre un error al crear o establecer la conexión con la base de datos.
         """
-        try:
-            self.create_pool()
-            self.connect()
+        try:            
+            if self.transaction is False:
+                self.create_pool()
+                self.connect()
             with self.connection.cursor() as cursor:
                 send_params = []
                 dynamic_vars = []
@@ -225,17 +249,16 @@ class Oradb:
                         dynamic_var_names.append(param_name)
                         dynamic_var_types.append(param_type)
 
-                cursor.callproc(procedure_name, send_params)
-                self.connection.commit()
+                cursor.callproc(procedure_name, send_params)                
                 params_out = get_dynamic_values(dynamic_var_names, dynamic_vars, dynamic_var_types)
 
                 return params_out
         except (oracledb.DatabaseError, oracledb.InterfaceError) as e:
             return {"OOPS": str(e)}
-        finally:
-            self.connection.commit()
-            self.close_connection()
-            self.disconnect()
+        finally: 
+            if self.transaction is False:           
+                self.close_connection()
+                self.disconnect()
 
     function_mappings = {
         ODBFunctionType.CURSOR: {
@@ -279,8 +302,9 @@ class Oradb:
                 ConnectionError: Si ocurre un error al crear o establecer la conexión con la base de datos.
         """
         try:
-            self.create_pool()
-            self.connect()
+            if self.transaction is False:
+                self.create_pool()
+                self.connect()
             with self.connection.cursor() as cursor:
                 params_function = []
                 dynamic_vars = []
@@ -335,8 +359,9 @@ class Oradb:
         except (oracledb.DatabaseError, oracledb.InterfaceError) as e:
             return {"OOPS": str(e)}
         finally:
-            self.close_connection()
-            self.disconnect()
+            if self.transaction is False:
+                self.close_connection()
+                self.disconnect()
 
     def execute_query(self, query: str, params: List[dict]):
         """

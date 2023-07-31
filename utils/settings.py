@@ -24,4 +24,3 @@ class Settings(BaseSettings):
     main_path:str = os.getenv('MAIN_PATH')
     config_aws:str = os.getenv('CONFIG_AWS')
     save_aws:bool = strtobool(os.getenv('SAVE_AWS'))
-    get_aws:str = os.getenv('GET_AWS')
